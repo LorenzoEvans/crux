@@ -1,4 +1,5 @@
 (ns crux-app.core
+  (:require [crux.api :as crux])
   (:gen-class))
 
 (defn -main
