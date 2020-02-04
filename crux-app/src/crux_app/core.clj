@@ -91,6 +91,51 @@
                   #inst "2115-02-15T18"
                   #inst "2115-02-19T18"]])
 
+(defn easy-ingest
+  "Uses crux put tx to add a vector of docs to specific node."
+  [node docs]
+  (crux/submit-tx node
+    (vec (for [doc docs]
+          [:crux.tx/put doc]))))
+
+(crux/submit-tx crux
+  [[:crux.tx/put (assoc manifest :badges ["SETUP" "PUT"])]]
+
+(easy-ingest crux
+                [{:crux.db/id :commodity/Pu
+                  :common-name "Plutonium"
+                  :type :element/metal
+                  :density 19.816
+                  :radioactive true}
+                 {:crux.db/id :commodity/N
+                  :common-name "Nitrogen"
+                  :type :element/gas
+                  :density 1.2596
+                  :radioactive false}
+                 {:crux.db/id :commodity/CH4
+                  :common-name "Methane"
+                  :type :element/gas
+                  :density 0.717
+                  :radioactive false}
+                 {:crux.db/id :commodity/Au
+                  :common-name "Gold"
+                  :type :element/metal
+                  :density 19.300
+                  :radioactive false}
+                 {:crux.db/id :commodity/C
+                  :common-name "Carbon"
+                  :type :element/non-metal
+                  :density 2.267
+                  :radioactive false}
+                 {:crux.db/id :commodity/borax
+                  :common-name "Borax"
+                  :IUPAC-name "Sodium tetraborate decahydrate"
+                  :other-names ["Borax decahydrate" "sodium borate" "sodium tetraborate" "disodium tetraborate"]
+                  :type :mineral/solid
+                  :appearance "white solid"
+                  :density 1.73
+                  :radioactive false}])
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
