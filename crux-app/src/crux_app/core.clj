@@ -98,6 +98,29 @@
     (vec (for [doc docs]
           [:crux.tx/put doc]))))
 
+(defn stock-check
+  [company-id item]
+  {:result (crux/q (crux/db crux)
+                   {:find '[name funds stock]
+                    :where ['[e :company-name name]
+                            '[e :credits funds]
+                            ['e item 'stock]]
+                    :args [{'e company-id}]})
+   :item item})
+
+(defn format-stock-check
+  [{:keys [result item] :as stock-check}]
+  (for [[name funds commod] result]
+    (str "Name: " name ", Funds: " funds ", " item " " commod)))
+
+(defn full-query
+  [node]
+  (crux/q
+   (crux/db node)
+   '{:find [id]
+     :where [[e :crux.db/id id]]
+     :full-results? true}))
+
 (crux/submit-tx crux
   [[:crux.tx/put (assoc manifest :badges ["SETUP" "PUT"])]]
 
@@ -136,6 +159,22 @@
                   :density 1.73
                   :radioactive false}])
 
+(defn filter-type 
+  [type]
+  (crux/q (crux/db crux)
+        {:find '[name]
+         :where '[[e :type t]
+                  [e :common-name name]]
+         :args [{'t type}]}))
+  
+(defn filter-appearance
+  [description]
+  (crux/q (crux/db crux)
+        {:find '[name IUPAC]
+         :where '[[e :common-name name]
+                  [e :IUPAC-name IUPAC]
+                  [e :appearance appearance]]
+         :args [{'appearance description}]}))
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
